@@ -10,14 +10,14 @@ def dict_same(origin, ignore=None):
     }
     # Check all keys in first dict
     for key in origin.keys():
-      if (not key in ignore):
+      if (not key in ignore and key in compared):
         if (origin[key] ==  compared[key]):
           same[key] = origin[key]
     return same
   return compare
 
 def evaluate(same):
-  properties = ['EXIF DateTimeOriginal']
+  properties = ['EXIF DateTimeOriginal', 'MakerNote ImageUniqueID']
   point = 0
   for key in same:
     if (key in properties):

@@ -12,12 +12,17 @@ def clean(dups):
   willContinue =prompt.options(green('Do you want to continue?'), inst_options)
   if willContinue == 'y': 
     generator = cleanDuplicated(dups)
-    next(generator)
+    for i in dups: 
+      next(generator)
+    
     # next(cleanDuplicated(dups))
   else: print('quuyerioyurti')
 
 def queryImages(image):
-  return {'name': image['name'], 'path': {'$ne': image['path']}}
+  query = {}
+  query['name'] = image['name']
+  query['$and'] = [{'path': {'$ne': image['path']}}]
+  return query
 
 def cleanDuplicated(dups):
   ignore = ['JPEGThumbnail', '_id', 'date', 'path', 'defects']

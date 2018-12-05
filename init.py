@@ -16,4 +16,7 @@ dev.constants.data['folder'] = input() or '/media'
 imgs = images(dev.constants.data['folder'])
 dups = duplicatedByName(imgs)
 ## made to mongodb
-clean(dups)
+if len(dups) > 0:
+  clean(dups)
+else:
+  puts(green('no duplicated images'))

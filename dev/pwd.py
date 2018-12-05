@@ -5,7 +5,7 @@ import re
 import collections
 from .utils import compose, getName, getDuplicated, merge
 from dev.mapper import mapp
-from dev.db import add, findOne, count
+from dev.db import add, findOne, find, count
 import dev.constants
 
 
@@ -40,10 +40,10 @@ def duplicatedByName(images):
       functions.extend([getPath, add, mapp]) 
     return  functions
   def buildQuery(image):
-    return merge(
-      {'defects': {'duplicated': {'state': '0'}}},
-      {'path': image})
-      
+    query = {}
+    query['defects.duplicated.state'] = '0'
+    query['$and'] = [{'path': image}]
+    return query
   return [i for i in [compose(*beStore(image))(image) 
     for image in getDuplicated(images)] if i!=None]
   
