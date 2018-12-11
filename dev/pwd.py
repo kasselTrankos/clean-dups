@@ -1,6 +1,8 @@
 import os
+import sys
 from clint.textui import colored, prompt, puts, validators
 from glob import glob
+from time import sleep
 import re
 import collections
 from .utils import compose, getName, getDuplicated, merge
@@ -22,14 +24,26 @@ def blue(text):
 def images(dirName):
   files = []
   pattern   = "/**/*"
-  for image in [f for f in glob(dirName.encode('utf-8', 'surrogateescape').decode('utf-8') + pattern, recursive=True) if re.match('.*\.jpg$', f, flags=re.IGNORECASE)]:
-    files.append(image)
-
-  return files
+  puts(red('start caprute images'))
+  dir = dirName.encode('utf-8', 'surrogateescape').decode('utf-8') + pattern
+  def valid(f):
+    return re.match('.*\.jpg$', f, flags=re.IGNORECASE) and re.search('\/\$RECYCLE\.BIN\/', f, flags=re.IGNORECASE)==None
+  def put(image):
+    sys.stdout.write('\033[K add image ' + blue(image)+ '\r')
+    sleep(0.001)
+    return image
+  return [image for image in 
+    [put(f) for f in glob(dir , recursive=True)
+      if valid(f)]]
 
 def files(name):
+  def put(image):
+    
+    print('new image : '+ image, end = '\r')
+    sleep(0.001)
+    return image
   dirName = dev.constants.data['folder'].encode('utf-8', 'surrogateescape').decode('utf-8') + '/**/*'
-  return [image for image in [f for f in glob(dirName, recursive=True) if getName(f).super() == name.super()]]
+  return [put(image) for image in [f for f in glob(dirName, recursive=True) if getName(f).super() == name.super()]]
 
 def duplicatedByName(images):
   def beStore(image):
@@ -44,6 +58,7 @@ def duplicatedByName(images):
     query['defects.duplicated.state'] = '0'
     query['$and'] = [{'path': image}]
     return query
+ 
   return [i for i in [compose(*beStore(image))(image) 
     for image in getDuplicated(images)] if i!=None]
   
